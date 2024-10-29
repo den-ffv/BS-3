@@ -1,0 +1,168 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int  @id @default(autoincrement())
+  login     String @unique
+  password  String
+  CrmCard   CrmCard[]
+  Order     Order[]
+
+  @@map("user")
+}
+
+model UserType {
+  id         Int  @id @default(autoincrement())
+  title      String
+  is_admin   Boolean
+  is_menejer Boolean
+  is_user    Boolean
+  CrmCard    CrmCard[]
+
+  @@map("user_type")
+}
+
+model CrmCard {
+  id               Int      @id @default(autoincrement())
+  user_name        String
+  user_surname     String
+  user_patronymic  String
+  title_card       String
+  active           Boolean
+  card_photo       String
+  user_id          Int
+  user             User     @relation(fields: [user_id], references: [id])
+  user_type_id     Int
+  user_type        UserType @relation(fields: [user_type_id], references: [id])
+  birthday         DateTime
+  CrmEmail         CrmEmail[]
+  CrmPaymentCard   CrmPaymentCard[]
+  CrmAddress       CrmAddress[]
+
+  @@map("crm_card")
+}
+
+model CrmEmail {
+  id           Int      @id @default(autoincrement())
+  email        String
+  is_main      Boolean
+  crm_crard_id Int
+  crm_card     CrmCard  @relation(fields: [crm_crard_id], references: [id])
+
+  @@map("crm_email")
+}
+
+model CrmPaymentCard {
+  id           Int      @id @default(autoincrement())
+  card_title   String
+  card_number  String
+  date_end     DateTime
+  crm_crard_id Int
+  crm_card     CrmCard  @relation(fields: [crm_crard_id], references: [id])
+
+  @@map("crm_payment")
+}
+
+model CrmAddress {
+  id           Int      @id @default(autoincrement())
+  country      String
+  city         String
+  street       String
+  house        String
+  apartment    String
+  crm_crard_id Int
+  crm_card     CrmCard  @relation(fields: [crm_crard_id], references: [id])
+
+  @@map("crm_address")
+}
+
+model Author {
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String
+  biography String?
+  Books     Book[]
+
+  @@map("author")
+}
+
+model Categories {
+  id   Int    @id @default(autoincrement())
+  name String
+  Books Book[]
+
+  @@map("categories")
+}
+
+model Publishers {
+  id      Int    @id @default(autoincrement())
+  name    String
+  address String
+  contact String
+  Books   Book[]
+
+  @@map("publishers")
+}
+
+model Book {
+  id               Int        @id @default(autoincrement())
+  title            String
+  description      String
+  price            Float
+  published_at     DateTime
+  stock            Int
+  author_id        Int?
+  author           Author?     @relation(fields: [author_id], references: [id])
+  category_id      Int?
+  category         Categories? @relation(fields: [category_id], references: [id])
+  publisher_id     Int?
+  publisher        Publishers? @relation(fields: [publisher_id], references: [id])
+  OrderItem        OrderItem[]
+
+  @@map("book")
+}
+
+model OrderStatus {
+  id                   Int    @id @default(autoincrement())
+  title                String
+  is_done              Boolean
+  is_awaiting_payment  Boolean
+  is_paid              Boolean
+  is_confirmed         Boolean
+  is_performed         Boolean
+  is_canceled          Boolean 
+  Order                Order[]
+
+  @@map("order_status")
+}
+
+model Order {
+  id               Int      @id @default(autoincrement())
+  total_amount     Float
+  order_status_id  Int
+  order_status     OrderStatus @relation(fields: [order_status_id], references: [id])
+  order_date       DateTime
+  user_id          Int
+  user             User     @relation(fields: [user_id], references: [id])
+  OrderItem        OrderItem[]
+
+  @@map("order")
+}
+
+model OrderItem {
+  id        Int    @id @default(autoincrement())
+  quantity  Int
+  price     Float
+  orderId   Int
+  order     Order  @relation(fields: [orderId], references: [id])
+  bookId    Int
+  book      Book   @relation(fields: [bookId], references: [id])
+
+  @@map("order_item")
+}
