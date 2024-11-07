@@ -8,52 +8,52 @@ datasource db {
 }
 
 model User {
-  id        Int  @id @default(autoincrement())
-  login     String @unique
-  password  String
-  CrmCard   CrmCard[]
-  Order     Order[]
+  id       Int       @id @default(autoincrement())
+  login    String    @unique
+  password String
+  CrmCard  CrmCard[]
+  Order    Order[]
 
   @@map("user")
 }
 
 model UserType {
-  id         Int  @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   title      String
-  is_admin   Boolean
-  is_menejer Boolean
-  is_user    Boolean
+  is_admin   Boolean   @default(false)
+  is_menejer Boolean   @default(false)
+  is_user    Boolean   @default(false)
   CrmCard    CrmCard[]
 
   @@map("user_type")
 }
 
 model CrmCard {
-  id               Int      @id @default(autoincrement())
-  user_name        String
-  user_surname     String
-  user_patronymic  String
-  title_card       String
-  active           Boolean
-  card_photo       String
-  user_id          Int
-  user             User     @relation(fields: [user_id], references: [id])
-  user_type_id     Int
-  user_type        UserType @relation(fields: [user_type_id], references: [id])
-  birthday         DateTime
-  CrmEmail         CrmEmail[]
-  CrmPaymentCard   CrmPaymentCard[]
-  CrmAddress       CrmAddress[]
+  id              Int              @id @default(autoincrement())
+  user_name       String?
+  user_surname    String?
+  user_patronymic String?
+  title_card      String?
+  active          Boolean          @default(false)
+  card_photo      String?
+  user_id         Int
+  user            User             @relation(fields: [user_id], references: [id])
+  user_type_id    Int
+  user_type       UserType         @relation(fields: [user_type_id], references: [id])
+  birthday        DateTime?
+  CrmEmail        CrmEmail[]
+  CrmPaymentCard  CrmPaymentCard[]
+  CrmAddress      CrmAddress[]
 
   @@map("crm_card")
 }
 
 model CrmEmail {
-  id           Int      @id @default(autoincrement())
+  id           Int     @id @default(autoincrement())
   email        String
-  is_main      Boolean
+  is_main      Boolean @default(false)
   crm_crard_id Int
-  crm_card     CrmCard  @relation(fields: [crm_crard_id], references: [id])
+  crm_card     CrmCard @relation(fields: [crm_crard_id], references: [id])
 
   @@map("crm_email")
 }
@@ -70,20 +70,20 @@ model CrmPaymentCard {
 }
 
 model CrmAddress {
-  id           Int      @id @default(autoincrement())
+  id           Int     @id @default(autoincrement())
   country      String
   city         String
   street       String
   house        String
   apartment    String
   crm_crard_id Int
-  crm_card     CrmCard  @relation(fields: [crm_crard_id], references: [id])
+  crm_card     CrmCard @relation(fields: [crm_crard_id], references: [id])
 
   @@map("crm_address")
 }
 
 model Author {
-  id        Int      @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   firstName String
   lastName  String
   biography String?
@@ -93,8 +93,8 @@ model Author {
 }
 
 model Categories {
-  id   Int    @id @default(autoincrement())
-  name String
+  id    Int    @id @default(autoincrement())
+  name  String
   Books Book[]
 
   @@map("categories")
@@ -111,58 +111,58 @@ model Publishers {
 }
 
 model Book {
-  id               Int        @id @default(autoincrement())
-  title            String
-  description      String
-  price            Float
-  published_at     DateTime
-  stock            Int
-  author_id        Int?
-  author           Author?     @relation(fields: [author_id], references: [id])
-  category_id      Int?
-  category         Categories? @relation(fields: [category_id], references: [id])
-  publisher_id     Int?
-  publisher        Publishers? @relation(fields: [publisher_id], references: [id])
-  OrderItem        OrderItem[]
+  id           Int         @id @default(autoincrement())
+  title        String
+  description  String
+  price        Float
+  published_at DateTime
+  stock        Int
+  author_id    Int?
+  author       Author?     @relation(fields: [author_id], references: [id])
+  category_id  Int?
+  category     Categories? @relation(fields: [category_id], references: [id])
+  publisher_id Int?
+  publisher    Publishers? @relation(fields: [publisher_id], references: [id])
+  OrderItem    OrderItem[]
 
   @@map("book")
 }
 
 model OrderStatus {
-  id                   Int    @id @default(autoincrement())
-  title                String
-  is_done              Boolean
-  is_awaiting_payment  Boolean
-  is_paid              Boolean
-  is_confirmed         Boolean
-  is_performed         Boolean
-  is_canceled          Boolean 
-  Order                Order[]
+  id                  Int     @id @default(autoincrement())
+  title               String
+  is_done             Boolean @default(false)
+  is_awaiting_payment Boolean @default(false)
+  is_paid             Boolean @default(false)
+  is_confirmed        Boolean @default(false)
+  is_performed        Boolean @default(false)
+  is_canceled         Boolean @default(false)
+  Order               Order[]
 
   @@map("order_status")
 }
 
 model Order {
-  id               Int      @id @default(autoincrement())
-  total_amount     Float
-  order_status_id  Int
-  order_status     OrderStatus @relation(fields: [order_status_id], references: [id])
-  order_date       DateTime
-  user_id          Int
-  user             User     @relation(fields: [user_id], references: [id])
-  OrderItem        OrderItem[]
+  id              Int         @id @default(autoincrement())
+  total_amount    Float
+  order_status_id Int
+  order_status    OrderStatus @relation(fields: [order_status_id], references: [id])
+  order_date      DateTime
+  user_id         Int
+  user            User        @relation(fields: [user_id], references: [id])
+  OrderItem       OrderItem[]
 
   @@map("order")
 }
 
 model OrderItem {
-  id        Int    @id @default(autoincrement())
-  quantity  Int
-  price     Float
-  orderId   Int
-  order     Order  @relation(fields: [orderId], references: [id])
-  bookId    Int
-  book      Book   @relation(fields: [bookId], references: [id])
+  id       Int   @id @default(autoincrement())
+  quantity Int
+  price    Float
+  orderId  Int
+  order    Order @relation(fields: [orderId], references: [id])
+  bookId   Int
+  book     Book  @relation(fields: [bookId], references: [id])
 
   @@map("order_item")
 }

@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "crm_card" ALTER COLUMN "user_name" DROP NOT NULL,
+ALTER COLUMN "user_surname" DROP NOT NULL,
+ALTER COLUMN "user_patronymic" DROP NOT NULL,
+ALTER COLUMN "title_card" DROP NOT NULL,
+ALTER COLUMN "card_photo" DROP NOT NULL,
+ALTER COLUMN "birthday" DROP NOT NULL;
