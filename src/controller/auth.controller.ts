@@ -1,8 +1,7 @@
 import bcrypt from 'bcrypt';
-import { User, CrmCard } from '@prisma/client';
+import { User } from '@prisma/client';
 
 import prisma from '../utils/prisma';
-import { log } from 'console';
 import { exclude } from '../utils/func';
 
 

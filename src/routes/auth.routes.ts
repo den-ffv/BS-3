@@ -8,6 +8,8 @@ export const authRouter = express.Router();
  * @swagger
  * /auth/signup:
  *   post:
+ *     tags:
+ *      - User
  *     summary: Create a new user
  *     description: Endpoint to sign up a new user
  *     requestBody:
@@ -67,6 +69,8 @@ authRouter.post('/signup',
  * @swagger
  * /auth/signin:
  *   post:
+ *     tags:
+ *      - User
  *     summary: Sign in an existing user
  *     description: Endpoint to sign in an existing user
  *     requestBody:
