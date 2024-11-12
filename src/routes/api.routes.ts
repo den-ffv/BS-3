@@ -23,6 +23,12 @@ const apiRoutes = Router();
  *     description: API for managing CRM payment card
  *   - name: Crm Address
  *     description: API for managing CRM address
+ *   - name: Author
+ *     description: API for managing Author
+ *   - name: Categories
+ *     description: API for managing Categories
+ *   - name: Publishers
+ *     description: API for managing Publishers
  */
 apiRoutes.use('/auth', authRouter );
 apiRoutes.use('/user_type', userTypeRouter );
