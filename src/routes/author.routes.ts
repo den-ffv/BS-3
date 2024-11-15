@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import * as AuthorController from '../controller/author.controller';
+import { authenticateToken } from '../middleware/jwt.middleware';
 
 export const authorRouter = express.Router();
 

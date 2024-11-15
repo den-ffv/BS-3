@@ -5,6 +5,10 @@ import { userTypeRouter } from "./userType.routes";
 import { crmEmailRouter } from "./crmEmail.routes";
 import { crmPaymentCardRouter } from "./crmPaymentCard.routes";
 import { crmAddressRouter } from "./crmAddress.routes";
+import { authorRouter } from "./author.routes";
+import { categoriesRouter } from "./categories.routes";
+import { publishersRouter } from "./publishers.routes";
+import { authenticateToken } from "../middleware/jwt.middleware";
 
 const apiRoutes = Router();
 
@@ -36,5 +40,8 @@ apiRoutes.use('/crm_card', crmCardRouter );
 apiRoutes.use('/crm_email', crmEmailRouter );
 apiRoutes.use('/crm_payment_card', crmPaymentCardRouter );
 apiRoutes.use('/crm_address', crmAddressRouter );
+apiRoutes.use('/author', authenticateToken, authorRouter );
+apiRoutes.use('/categories', categoriesRouter );
+apiRoutes.use('/publishers', publishersRouter );
 
 export default apiRoutes;

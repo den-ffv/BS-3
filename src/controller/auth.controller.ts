@@ -3,6 +3,7 @@ import { User } from '@prisma/client';
 
 import prisma from '../utils/prisma';
 import { exclude } from '../utils/func';
+import { generateToken } from '../utils/jwt';
 
 
 
@@ -50,5 +51,7 @@ export const signin = async (data: Omit<User, 'id'>) => {
 
   const userCrmCard = await prisma.crmCard.findFirst({ where: { user_id: user.id }, include: { user_type: true } });
 
-  return { user: exclude(user, ['password']), user_crm: userCrmCard }
+  const token = generateToken(user);
+
+  return { user: exclude(user, ['password']), user_crm: userCrmCard, token };
 }
