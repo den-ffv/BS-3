@@ -1,17 +1,17 @@
 import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
-import * as AuthorController from '../controller/author.controller';
+import * as OrderController from '../controller/order.controller';
 
-export const authorRouter = express.Router();
+export const orderRouter = express.Router();
 
 /**
  * @swagger
- * /author:
+ * /order:
  *   post:
  *     tags:
- *       - Author
- *     summary: Create a new author
- *     description: Endpoint to create a new author record in the system.
+ *       - Order
+ *     summary: Create a new order
+ *     description: Endpoint to create a new order in the system.
  *     requestBody:
  *       required: true
  *       content:
@@ -19,24 +19,32 @@ export const authorRouter = express.Router();
  *           schema:
  *             type: object
  *             properties:
- *               firstName:
+ *               total_amount:
+ *                 type: number
+ *                 format: float
+ *                 description: Total amount of the order
+ *                 example: 100.5
+ *               order_status_id:
+ *                 type: integer
+ *                 description: ID of the associated order status
+ *                 example: 1
+ *               order_date:
  *                 type: string
- *                 description: First name of the author
- *                 example: "John"
- *               lastName:
- *                 type: string
- *                 description: Last name of the author
- *                 example: "Doe"
- *               biography:
- *                 type: string
- *                 description: A brief biography of the author
- *                 example: "John Doe is a prolific writer of science fiction."
+ *                 format: date-time
+ *                 description: The date when the order was placed
+ *                 example: "2024-11-18T10:30:00Z"
+ *               user_id:
+ *                 type: integer
+ *                 description: ID of the user who placed the order
+ *                 example: 123
  *             required:
- *               - firstName
- *               - lastName
+ *               - total_amount
+ *               - order_status_id
+ *               - order_date
+ *               - user_id
  *     responses:
  *       201:
- *         description: The author was successfully created
+ *         description: The order was successfully created
  *         content:
  *           application/json:
  *             schema:
@@ -44,16 +52,26 @@ export const authorRouter = express.Router();
  *               properties:
  *                 id:
  *                   type: integer
- *                   description: Unique ID of the created author
- *                 firstName:
+ *                   description: Unique ID of the created order
+ *                   example: 1
+ *                 total_amount:
+ *                   type: number
+ *                   format: float
+ *                   description: Total amount of the order
+ *                   example: 100.5
+ *                 order_status_id:
+ *                   type: integer
+ *                   description: ID of the associated order status
+ *                   example: 1
+ *                 order_date:
  *                   type: string
- *                   description: First name of the author
- *                 lastName:
- *                   type: string
- *                   description: Last name of the author
- *                 biography:
- *                   type: string
- *                   description: Biography of the author
+ *                   format: date-time
+ *                   description: The date when the order was placed
+ *                   example: "2024-11-18T10:30:00Z"
+ *                 user_id:
+ *                   type: integer
+ *                   description: ID of the user who placed the order
+ *                   example: 123
  *       400:
  *         description: Validation errors
  *         content:
@@ -86,10 +104,11 @@ export const authorRouter = express.Router();
  *                   type: string
  *                   example: "Internal server error"
  */
-authorRouter.post('/',
-  body('firstName').notEmpty().isString(),
-  body('lastName').notEmpty().isString(),
-  body('biography').if(body('biography').notEmpty()).isString(),
+orderRouter.post('/',
+  body('total_amount').notEmpty().isFloat(),
+  body('order_status_id').notEmpty().isInt(),
+  body('order_date').notEmpty().isISO8601().toDate(),
+  body('user_id').notEmpty().isInt(),
   async (request: Request, response: Response): Promise<any> => {
     console.log('SIGNUP', request.body);
     const errors = validationResult(request);
@@ -98,7 +117,7 @@ authorRouter.post('/',
     }
     try {
       const data = request.body;
-      const record = await AuthorController.createAuthor(data);
+      const record = await OrderController.createOrder(data);
       return response.status(201).json(record);
     } catch (error: any) {
       return response.status(500).json({ message: error.message });
@@ -108,20 +127,19 @@ authorRouter.post('/',
 
 /**
  * @swagger
- * /author/{id}:
+ * /order/{id}:
  *   put:
  *     tags:
- *       - Author
- *     summary: Update an existing author
- *     description: Endpoint to update the details of an existing author by ID.
+ *       - Order
+ *     summary: Update an existing order
+ *     description: Endpoint to update an order in the system by its unique ID.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: The unique ID of the author to update
  *         schema:
  *           type: integer
- *           example: 1
+ *         description: The unique ID of the order to update
  *     requestBody:
  *       required: true
  *       content:
@@ -129,24 +147,32 @@ authorRouter.post('/',
  *           schema:
  *             type: object
  *             properties:
- *               firstName:
+ *               total_amount:
+ *                 type: number
+ *                 format: float
+ *                 description: Total amount of the order
+ *                 example: 120.5
+ *               order_status_id:
+ *                 type: integer
+ *                 description: ID of the associated order status
+ *                 example: 2
+ *               order_date:
  *                 type: string
- *                 description: First name of the author
- *                 example: "John"
- *               lastName:
- *                 type: string
- *                 description: Last name of the author
- *                 example: "Doe"
- *               biography:
- *                 type: string
- *                 description: A brief biography of the author
- *                 example: "John Doe is a prolific writer of science fiction."
+ *                 format: date-time
+ *                 description: The date when the order was placed
+ *                 example: "2024-11-19T10:30:00Z"
+ *               user_id:
+ *                 type: integer
+ *                 description: ID of the user who placed the order
+ *                 example: 123
  *             required:
- *               - firstName
- *               - lastName
+ *               - total_amount
+ *               - order_status_id
+ *               - order_date
+ *               - user_id
  *     responses:
  *       200:
- *         description: The author was successfully updated
+ *         description: The order was successfully updated
  *         content:
  *           application/json:
  *             schema:
@@ -154,16 +180,26 @@ authorRouter.post('/',
  *               properties:
  *                 id:
  *                   type: integer
- *                   description: Unique ID of the updated author
- *                 firstName:
+ *                   description: Unique ID of the updated order
+ *                   example: 1
+ *                 total_amount:
+ *                   type: number
+ *                   format: float
+ *                   description: Total amount of the order
+ *                   example: 120.5
+ *                 order_status_id:
+ *                   type: integer
+ *                   description: ID of the associated order status
+ *                   example: 2
+ *                 order_date:
  *                   type: string
- *                   description: First name of the author
- *                 lastName:
- *                   type: string
- *                   description: Last name of the author
- *                 biography:
- *                   type: string
- *                   description: Biography of the author
+ *                   format: date-time
+ *                   description: The date when the order was placed
+ *                   example: "2024-11-19T10:30:00Z"
+ *                 user_id:
+ *                   type: integer
+ *                   description: ID of the user who placed the order
+ *                   example: 123
  *       400:
  *         description: Validation errors
  *         content:
@@ -186,7 +222,7 @@ authorRouter.post('/',
  *                         type: string
  *                         description: Location of the error
  *       404:
- *         description: Author not found with the provided ID
+ *         description: Order not found
  *         content:
  *           application/json:
  *             schema:
@@ -194,7 +230,7 @@ authorRouter.post('/',
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "Author not found"
+ *                   example: "CRM card not found"
  *       500:
  *         description: Internal server error
  *         content:
@@ -206,10 +242,11 @@ authorRouter.post('/',
  *                   type: string
  *                   example: "Internal server error"
  */
-authorRouter.put('/:id',
-    body('firstName').notEmpty().isString(),
-    body('lastName').notEmpty().isString(),
-    body('biography').if(body('biography').notEmpty()).isString(),
+orderRouter.put('/:id',
+    body('total_amount').notEmpty().isFloat(),
+    body('order_status_id').notEmpty().isInt(),
+    body('order_date').notEmpty().isISO8601().toDate(),
+    body('user_id').notEmpty().isInt(),
     async (request: Request, response: Response): Promise<any> => {
       const errors = validationResult(request);
       if (!errors.isEmpty()) {
@@ -218,7 +255,7 @@ authorRouter.put('/:id',
       try {
         const { id } = request.params;
         const data = request.body;
-        const updatedRecord = await AuthorController.updateAuthor(Number(id), data);
+        const updatedRecord = await OrderController.updateOrder(Number(id), data);
   
         if (!updatedRecord) {
           return response.status(404).json({ message: 'CRM card not found' });
@@ -231,17 +268,18 @@ authorRouter.put('/:id',
     }
   );
 
+
 /**
  * @swagger
- * /author:
+ * /order:
  *   get:
  *     tags:
- *       - Author
- *     summary: Retrieve a list of authors
- *     description: Endpoint to fetch a list of all authors in the system.
+ *       - Order
+ *     summary: Get all orders
+ *     description: Endpoint to retrieve a list of all orders in the system.
  *     responses:
  *       200:
- *         description: A list of authors
+ *         description: List of orders retrieved successfully
  *         content:
  *           application/json:
  *             schema:
@@ -251,20 +289,26 @@ authorRouter.put('/:id',
  *                 properties:
  *                   id:
  *                     type: integer
- *                     description: Unique ID of the author
+ *                     description: Unique ID of the order
  *                     example: 1
- *                   firstName:
+ *                   total_amount:
+ *                     type: number
+ *                     format: float
+ *                     description: Total amount of the order
+ *                     example: 100.5
+ *                   order_status_id:
+ *                     type: integer
+ *                     description: ID of the associated order status
+ *                     example: 1
+ *                   order_date:
  *                     type: string
- *                     description: First name of the author
- *                     example: "John"
- *                   lastName:
- *                     type: string
- *                     description: Last name of the author
- *                     example: "Doe"
- *                   biography:
- *                     type: string
- *                     description: A brief biography of the author
- *                     example: "John Doe is a prolific writer of science fiction."
+ *                     format: date-time
+ *                     description: The date when the order was placed
+ *                     example: "2024-11-18T10:30:00Z"
+ *                   user_id:
+ *                     type: integer
+ *                     description: ID of the user who placed the order
+ *                     example: 123
  *       500:
  *         description: Internal server error
  *         content:
@@ -276,9 +320,9 @@ authorRouter.put('/:id',
  *                   type: string
  *                   example: "Internal server error"
  */
-authorRouter.get('/', async (request: Request, response: Response): Promise<any> => {
+orderRouter.get('/', async (request: Request, response: Response): Promise<any> => {
   try {
-    const records = await AuthorController.getAuthor();
+    const records = await OrderController.getOrder();
     return response.status(200).json(records);
   } catch (error: any) {
     return response.status(500).json({ message: error.message });
@@ -287,23 +331,22 @@ authorRouter.get('/', async (request: Request, response: Response): Promise<any>
 
 /**
  * @swagger
- * /author/{id}:
+ * /order/{id}:
  *   get:
  *     tags:
- *       - Author
- *     summary: Retrieve an author by ID
- *     description: Endpoint to fetch details of a specific author by their unique ID.
+ *       - Order
+ *     summary: Get order by ID
+ *     description: Endpoint to retrieve a specific order by its unique ID.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: The unique ID of the author to retrieve
  *         schema:
  *           type: integer
- *           example: 1
+ *         description: The unique ID of the order to retrieve
  *     responses:
  *       200:
- *         description: Details of the requested author
+ *         description: Order retrieved successfully
  *         content:
  *           application/json:
  *             schema:
@@ -311,22 +354,28 @@ authorRouter.get('/', async (request: Request, response: Response): Promise<any>
  *               properties:
  *                 id:
  *                   type: integer
- *                   description: Unique ID of the author
+ *                   description: Unique ID of the order
  *                   example: 1
- *                 firstName:
+ *                 total_amount:
+ *                   type: number
+ *                   format: float
+ *                   description: Total amount of the order
+ *                   example: 100.5
+ *                 order_status_id:
+ *                   type: integer
+ *                   description: ID of the associated order status
+ *                   example: 1
+ *                 order_date:
  *                   type: string
- *                   description: First name of the author
- *                   example: "John"
- *                 lastName:
- *                   type: string
- *                   description: Last name of the author
- *                   example: "Doe"
- *                 biography:
- *                   type: string
- *                   description: A brief biography of the author
- *                   example: "John Doe is a prolific writer of science fiction."
+ *                   format: date-time
+ *                   description: The date when the order was placed
+ *                   example: "2024-11-18T10:30:00Z"
+ *                 user_id:
+ *                   type: integer
+ *                   description: ID of the user who placed the order
+ *                   example: 123
  *       404:
- *         description: Author not found
+ *         description: Order not found
  *         content:
  *           application/json:
  *             schema:
@@ -334,7 +383,7 @@ authorRouter.get('/', async (request: Request, response: Response): Promise<any>
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "Author not found"
+ *                   example: "CRM card not found"
  *       500:
  *         description: Internal server error
  *         content:
@@ -346,10 +395,10 @@ authorRouter.get('/', async (request: Request, response: Response): Promise<any>
  *                   type: string
  *                   example: "Internal server error"
  */
-authorRouter.get('/:id', async (request: Request, response: Response): Promise<any> => {
+orderRouter.get('/:id', async (request: Request, response: Response): Promise<any> => {
   try {
     const { id } = request.params;
-    const record = await AuthorController.getAuthorById(Number(id));
+    const record = await OrderController.getOrderById(Number(id));
     if (!record) {
       return response.status(404).json({ message: 'CRM card not found' });
     }
@@ -361,23 +410,22 @@ authorRouter.get('/:id', async (request: Request, response: Response): Promise<a
 
 /**
  * @swagger
- * /author/{id}:
+ * /order/{id}:
  *   delete:
  *     tags:
- *       - Author
- *     summary: Delete an author by ID
- *     description: Endpoint to delete an author by their unique ID.
+ *       - Order
+ *     summary: Delete order by ID
+ *     description: Endpoint to delete a specific order by its unique ID.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: The unique ID of the author to delete
  *         schema:
  *           type: integer
- *           example: 1
+ *         description: The unique ID of the order to delete
  *     responses:
  *       200:
- *         description: Author deleted successfully
+ *         description: Order deleted successfully
  *         content:
  *           application/json:
  *             schema:
@@ -385,9 +433,9 @@ authorRouter.get('/:id', async (request: Request, response: Response): Promise<a
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "Author deleted successfully"
+ *                   example: "CRM card deleted successfully"
  *       404:
- *         description: Author not found
+ *         description: Order not found
  *         content:
  *           application/json:
  *             schema:
@@ -395,7 +443,7 @@ authorRouter.get('/:id', async (request: Request, response: Response): Promise<a
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "Author not found"
+ *                   example: "CRM card not found"
  *       500:
  *         description: Internal server error
  *         content:
@@ -407,10 +455,10 @@ authorRouter.get('/:id', async (request: Request, response: Response): Promise<a
  *                   type: string
  *                   example: "Internal server error"
  */
-authorRouter.delete('/:id', async (request: Request, response: Response): Promise<any> => {
+orderRouter.delete('/:id', async (request: Request, response: Response): Promise<any> => {
   try {
     const { id } = request.params;
-    const deletedRecord = await AuthorController.deleteAuthor(Number(id));
+    const deletedRecord = await OrderController.deleteOrder(Number(id));
 
     if (!deletedRecord) {
       return response.status(404).json({ message: 'CRM card not found' });

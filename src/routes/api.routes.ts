@@ -33,6 +33,14 @@ const apiRoutes = Router();
  *     description: API for managing Categories
  *   - name: Publishers
  *     description: API for managing Publishers
+ *   - name: Book
+ *     description: API for managing Book
+ *   - name: OrderStatus
+ *     description: API for managing Order status
+ *   - name: Order
+ *     description: API for managing Order
+ *   - name: OrderItem
+ *     description: API for managing Order item
  */
 apiRoutes.use('/auth', authRouter );
 apiRoutes.use('/user_type', userTypeRouter );
