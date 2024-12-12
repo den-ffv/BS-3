@@ -402,7 +402,7 @@ bookRouter.get('/', async (request: Request, response: Response): Promise<any> =
 
 /**
  * @swagger
- * /book/{id}:
+ * /book/get/{id}:
  *   get:
  *     tags:
  *       - Book
@@ -482,8 +482,9 @@ bookRouter.get('/', async (request: Request, response: Response): Promise<any> =
  *                   type: string
  *                   example: "Internal server error"
  */
-bookRouter.get('/:id', async (request: Request, response: Response): Promise<any> => {
+bookRouter.get('/get/:id', async (request: Request, response: Response): Promise<any> => {
   try {
+    console.log(123);
     const { id } = request.params;
     const record = await BookController.getBookById(Number(id));
     if (!record) {
@@ -555,5 +556,127 @@ bookRouter.delete('/:id', async (request: Request, response: Response): Promise<
     return response.status(200).json({ message: 'CRM card deleted successfully' });
   } catch (error: any) {
     return response.status(500).json({ message: error.message });
+  }
+});
+
+
+/**
+ * @swagger
+ * /book/filters:
+ *   get:
+ *     tags:
+ *       - Book
+ *     summary: Retrieve a book by filters
+ *     description: Endpoint to fetch a specific book by its unique ID.
+ *     parameters:
+ *     - in: query
+ *       name: author_id
+ *       schema:
+ *         type: integer
+ *       description: Filter books by author ID
+ *     - in: query
+ *       name: category_id
+ *       schema:
+ *         type: integer
+ *       description: Filter books by category ID
+ *     - in: query
+ *       name: publisher_id
+ *       schema:
+ *         type: integer
+ *       description: Filter books by publisher ID
+ *     - in: query
+ *       name: min_price
+ *       schema:
+ *         type: number
+ *         format: float
+ *       description: Minimum price of the book
+ *     - in: query
+ *       name: max_price
+ *       schema:
+ *         type: number
+ *         format: float
+ *       description: Maximum price of the book
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the book
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: Unique ID of the book
+ *                   example: 1
+ *                 title:
+ *                   type: string
+ *                   description: Title of the book
+ *                   example: "The Great Gatsby"
+ *                 description:
+ *                   type: string
+ *                   description: Description or summary of the book
+ *                   example: "A novel about the American dream."
+ *                 price:
+ *                   type: number
+ *                   format: float
+ *                   description: Price of the book
+ *                   example: 19.99
+ *                 published_at:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Publication date of the book
+ *                   example: "2024-11-18T00:00:00Z"
+ *                 stock:
+ *                   type: integer
+ *                   description: Number of copies available
+ *                   example: 100
+ *                 author_id:
+ *                   type: integer
+ *                   description: ID of the author of the book
+ *                   example: 1
+ *                 category_id:
+ *                   type: integer
+ *                   description: ID of the category the book belongs to
+ *                   example: 2
+ *                 publisher_id:
+ *                   type: integer
+ *                   description: ID of the publisher of the book
+ *                   example: 3
+ *       404:
+ *         description: Book not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "CRM card not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+bookRouter.get('/filters', async (request: Request, response: Response): Promise<any> => {
+
+  try {    
+      const filters = {
+          author_id: request.query.author_id ? Number(request.query.author_id) : undefined,
+          category_id: request.query.category_id ? Number(request.query.category_id) : undefined,
+          publisher_id: request.query.publisher_id ? Number(request.query.publisher_id) : undefined,
+          min_price: request.query.min_price ? Number(request.query.min_price) : undefined,
+          max_price: request.query.max_price ? Number(request.query.max_price) : undefined,
+      };
+
+      const records = await BookController.getBookByFilter(filters);
+      return response.status(200).json(records);
+  } catch (error: any) {
+      return response.status(500).json({ message: error.message });
   }
 });
